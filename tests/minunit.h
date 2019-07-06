@@ -19,9 +19,9 @@
   printf("-----\nRUNNING: %s\n", argv[0]); \
   char *result = name(); \
   if (result != 0) {\
-    printf("FAILED: %s\n", result); \
+    printf(KRED "FAILED:" KNRM " %s\n", result); \
   } else {\
-    printf("ALL TESTS PASSED\n"); \
+    printf(KGRN "ALL TESTS PASSED" KNRM "\n"); \
   }\
   printf("Tests run: %d\n", tests_run); \
   exit(result != 0); \

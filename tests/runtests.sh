@@ -6,9 +6,9 @@ do
   then
     if ./$i 2>> tests/tests.log
     then
-      echo "$i PASS"
+      echo "$i \x1B[32mPASS\033[0m"
     else
-      echo "ERROR in test $i: here's tests/tests.log"
+      echo "\x1B[31mERROR\033[0m in test $i: here's tests/tests.log"
       echo "------"
       tail tests/tests.log
       exit 1
