@@ -1,5 +1,5 @@
 CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LDFLAGS=-ldl $(OPTLIBS)
+LDFLAGS=$(OPTLIBS)
 PREFIX?=/usr/local
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
@@ -13,23 +13,19 @@ PROGRAMS_SRC=$(wildcard bin/*.c)
 PROGRAMS=$(patsubst %.c,%,$(PROGRAMS_SRC))
 
 TARGET=build/liblcthw.a
-SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
 
 # The Target Build
-all: $(TARGET) $(SO_TARGET) tests $(PROGRAMS)
+all: $(TARGET) tests $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TESTS): $(TARGET) $(SO_TARGET)
+$(TESTS): $(TARGET)
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
 	ranlib $@
-
-$(SO_TARGET): $(TARGET) $(OBJECTS)
-	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
 
 $(PROGRAMS): CFLAGS += $(TARGET)
 
@@ -39,7 +35,7 @@ build:
 
 # The Unit Tests
 .PHONY: tests
-tests: CFLAGS += $(TARGET)
+tests: LDLIBS += $(TARGET)
 tests: $(TESTS)
 	sh ./tests/runtests.sh
 
@@ -54,7 +50,6 @@ clean:
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	install $(SO_TARGET) $(DESTDIR)/$(PREFIX)/lib/
 	# install -d $(DESTDIR)/$(PREFIX)/include/YOUR_LIBRARY
 	# install $(HEADERS) $(DESTDIR)/$(PREFIX)/include/YOUR_LIBRARY
 
